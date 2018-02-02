@@ -15,12 +15,8 @@
     SHRI_ISLANDS.CELL_NEIGHBOURS_RELATIVE_COORDINATES = [
         [1, 0],
         [0, 1],
-        [1, 1],
         [0, -1],
-        [-1, 0],
-        [1, -1],
-        [-1, 1],
-        [-1, -1],
+        [-1, 0]
     ];
 
     root.SHRI_ISLANDS = SHRI_ISLANDS;
