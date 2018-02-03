@@ -3,7 +3,6 @@
     var ISLAND = root.SHRI_ISLANDS.ISLAND;
     var CELL_NEIGHBOURS_RELATIVE_COORDINATES = root.SHRI_ISLANDS.CELL_NEIGHBOURS_RELATIVE_COORDINATES;
     var element = root.element;
-    var visitcounter = 0;
     var counterLabel;
     
     /**
@@ -14,20 +13,26 @@
      * @returns {number} кол-во островов
      */
     function visialiseSolution(map) {
-        let counter = 0;
-        let tempMap = map.map((row) => {
-            return row.slice();
+        let counter = 0,
+            visitcounter = 0,
+            tempMap = map.map((row) => {
+                return row.slice();
+            }),
+            counterText = document.querySelector('.map__res');   
+
+        counterText.innerText = counterText.innerText.replace(/[0-9]/, counter);    
+        
+        document.querySelectorAll('.map__cell').forEach(element => {
+            element.classList.add('unvisited');
+            element.classList.add('unqeued');
         });
+
         /**
          * @param {number[]} coordinates координаты ячейки матрицы островов
          * @returns {void} кол-во островов
          */
         const countIsland = (coordinates) => {
             if (unvisited(coordinates)) {
-                document.querySelectorAll('.map__row')[coordinates[0]]
-                .children[coordinates[1]]
-                .classList
-                .remove('unqeued');
                 queueForVisualisation(coordinates);
             }
             if (tempMap[coordinates[0]][coordinates[1]] === 1) {
@@ -37,19 +42,19 @@
         }
 
         const unvisited = (coordinates) => {
-            const classes = document.querySelectorAll('.map__row')[coordinates[0]]
+            return document.querySelectorAll('.map__row')[coordinates[0]]
                             .children[coordinates[1]]
-                            .classList;
-            return classes.contains('unvisited') && classes.contains('unqeued');
+                            .classList.contains('unqeued');
         }
 
         const queueForVisualisation = (coordinates) => {
+            const classes = document.querySelectorAll('.map__row')[coordinates[0]]
+            .children[coordinates[1]]
+            .classList;
             visitcounter++;
+            classes.remove('unqeued');
             setTimeout(() => {
-                document.querySelectorAll('.map__row')[coordinates[0]]
-                .children[coordinates[1]]
-                .classList
-                .remove('unvisited');
+                classes.remove('unvisited');
             }, visitcounter * 200);
         }
 
@@ -71,10 +76,6 @@
   
         const deleteIsland = (coordinates) => {
             if (unvisited(coordinates)) {
-                document.querySelectorAll('.map__row')[coordinates[0]]
-                .children[coordinates[1]]
-                .classList
-                .remove('unqeued');
                 queueForVisualisation(coordinates);
             }   
             tempMap[coordinates[0]][coordinates[1]] = 0;
@@ -103,16 +104,6 @@
 
         }
 
-        document.querySelectorAll('.map__cell').forEach(element => {
-            element.classList.add('unvisited');
-            element.classList.add('unqeued');
-        });
-
-        let counterText = document.querySelector('.map__res');            
-        
-        counter = 0;
-        counterText.innerText = counterText.innerText.replace(/[0-9]/, counter);    
-        visitcounter = 0;
         for (let i = 0; i < tempMap.length; i++) {
             for (let j = 0; j < tempMap[i].length; j++) {
                 countIsland([i, j]);
