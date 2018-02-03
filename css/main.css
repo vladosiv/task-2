@@ -39,3 +39,7 @@ body {
 .map__cell_island {
     background-color: #fad946;
 }
+
+.unvisited {
+    background-color: #eee;
+}

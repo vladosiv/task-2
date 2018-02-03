@@ -63,10 +63,12 @@
                     element('div', 'map__cell' + (type ? ' map__cell_' + type : ''))
                 );
             }
-
             containerElem.appendChild(rowElem);
         }
-
+        
+        const button =  element('button', 'map__visualize', 'Visualise');
+        containerElem.appendChild(button);
+        button.onclick = () => root.SHRI_ISLANDS.visialiseSolution(map);
         return containerElem;
     }
 
