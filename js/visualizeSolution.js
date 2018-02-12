@@ -12,9 +12,8 @@
      * @param {number[][]} map карта островов представленная двумерной матрицей чисел
      * @returns {number} кол-во островов
      */
-    function visialiseSolution(map) {
+    async function visialiseSolution(map) {
         let counter = 0,
-            visitcounter = 0,
             tempMap = map.map((row) => {
                 return row.slice();
             }),
@@ -24,38 +23,39 @@
         
         document.querySelectorAll('.map__cell').forEach(element => {
             element.classList.add('unvisited');
-            element.classList.add('unqeued');
         });
 
         /**
          * @param {number[]} coordinates координаты ячейки матрицы островов
          * @returns {void} кол-во островов
          */
-        const countIsland = (coordinates) => {
+        async function countIsland (coordinates) {
+            var wait;
             if (unvisited(coordinates)) {
-                queueForVisualisation(coordinates);
+                wait = await visualisize(coordinates);
             }
             if (tempMap[coordinates[0]][coordinates[1]] === 1) {
                 incrementCounter();
-                deleteIsland(coordinates);
+                wait = await deleteIsland(coordinates);
             }
         }
 
         const unvisited = (coordinates) => {
             return document.querySelectorAll('.map__row')[coordinates[0]]
                             .children[coordinates[1]]
-                            .classList.contains('unqeued');
+                            .classList.contains('unvisited');
         }
 
-        const queueForVisualisation = (coordinates) => {
-            const classes = document.querySelectorAll('.map__row')[coordinates[0]]
-            .children[coordinates[1]]
-            .classList;
-            visitcounter++;
-            classes.remove('unqeued');
-            setTimeout(() => {
-                classes.remove('unvisited');
-            }, visitcounter * 200);
+        const visualisize = (coordinates) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    const classes = document.querySelectorAll('.map__row')[coordinates[0]]
+                    .children[coordinates[1]]
+                    .classList;
+                    classes.remove('unvisited');
+                  resolve("result");
+                }, 300);
+              });
         }
 
         /**
@@ -63,10 +63,7 @@
          */
         const incrementCounter = () => {
             counter++;
-            let newCounter = counter;
-            setTimeout(() => {
-                counterText.innerText = counterText.innerText.replace(/[0-9]/, newCounter);    
-            }, visitcounter * 200);
+            counterText.innerText = counterText.innerText.replace(/[0-9]/, counter);  
         }
         
         /**
@@ -74,14 +71,15 @@
          * @returns {void} кол-во островов
          */
   
-        const deleteIsland = (coordinates) => {
+        async function deleteIsland (coordinates) {
             if (unvisited(coordinates)) {
-                queueForVisualisation(coordinates);
+               var wait = await visualisize(coordinates);
             }   
             tempMap[coordinates[0]][coordinates[1]] = 0;
             getNeighbours(coordinates).forEach(neighbour => {
                 deleteIsland(neighbour);
-            })
+            });
+            return true;
         }
 
         /**
@@ -106,7 +104,7 @@
 
         for (let i = 0; i < tempMap.length; i++) {
             for (let j = 0; j < tempMap[i].length; j++) {
-                countIsland([i, j]);
+                await countIsland([i, j]);
             }
         }
         return counter;
